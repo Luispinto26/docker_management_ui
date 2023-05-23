@@ -40,3 +40,53 @@ Docker Management UI provides a user-friendly interface for managing Docker cont
 ```bash
 git clone <repository-url>
 cd docker-management-ui
+
+2. Install dependencies:
+
+```bash
+npm install
+
+
+3. Set up environment variables:
+- Create a `.env` file in the root directory.
+- Define the following variables in the `.env` file:
+  ```
+  MONGODB_URI=your-mongodb-connection-string
+  ```
+  Replace `your-mongodb-connection-string` with the connection string for your MongoDB database.
+
+4. Start the backend server:
+```bash
+npm start
+
+
+5. Open the frontend in a web browser:
+- Navigate to `http://localhost:3000` to access the Docker Management UI.
+
+## Usage
+
+1. Open the Docker Management UI in a web browser.
+
+2. To add a new button:
+- Click on the "Add Button" option.
+- Enter the button name, IP address of the Docker container, and optionally provide an image URL.
+- Click "Save" to add the button.
+
+3. The new button will appear on the UI, displaying the container's uptime and current state.
+
+4. To edit a button:
+- Click on the button you want to edit.
+- Update the container information.
+- Click "Save" to apply the changes.
+
+5. To remove a button:
+- Click on the button you want to remove.
+- Click "Remove" to delete the button.
+
+## Contributing
+
+Contributions to Docker Management UI are welcome! If you find any issues or have suggestions for improvements, please open an issue or submit a pull request.
+
+## License
+
+This project is licensed under the MIT License.
