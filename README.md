@@ -1,6 +1,6 @@
 # Docker Management UI
 
-<div align="center">
+<div align="center" sytle="margin: 20px;">
   <img src="./logo.png" alt="Project Logo">
 </div>
 
