@@ -1,6 +1,6 @@
 # Docker Management UI
 
-<!-- ![Project Logo](./logo.png) -->
+![Project Logo](./logo.png)
 
 Docker Management UI is a web-based application that allows users to create shortcuts for Docker containers. Users can easily add buttons with customizable names, IP addresses of the Docker containers, and optional images. Each button provides information about the container's uptime and current state.
 
@@ -39,7 +39,7 @@ Docker Management UI provides a user-friendly interface for managing Docker cont
 1. Clone the repository:
 
 ```bash
-git clone <repository-url>
+git clone [<repository-url>](https://github.com/Luispinto26/docker_management_ui.git)
 cd docker-management-ui
 ```
 
@@ -50,19 +50,24 @@ npm install
 ```
 
 3. Set up environment variables:
+
 - Create a `.env` file in the root directory.
 - Define the following variables in the `.env` file:
+
   ```bash
   MONGODB_URI=your-mongodb-connection-string
   ```
+
   Replace `your-mongodb-connection-string` with the connection string for your MongoDB database.
 
 4. Start the backend server:
+
 ```bash
 npm start
 ```
 
 5. Open the frontend in a web browser:
+
 - Navigate to `http://localhost:3000` to access the Docker Management UI.
 
 ## Usage
@@ -70,6 +75,7 @@ npm start
 1. Open the Docker Management UI in a web browser.
 
 2. To add a new button:
+
 - Click on the "Add Button" option.
 - Enter the button name, IP address of the Docker container, and optionally provide an image URL.
 - Click "Save" to add the button.
@@ -77,11 +83,13 @@ npm start
 3. The new button will appear on the UI, displaying the container's uptime and current state.
 
 4. To edit a button:
+
 - Click on the button you want to edit.
 - Update the container information.
 - Click "Save" to apply the changes.
 
 5. To remove a button:
+
 - Click on the button you want to remove.
 - Click "Remove" to delete the button.
 
