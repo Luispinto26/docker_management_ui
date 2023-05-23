@@ -1,6 +1,8 @@
 # Docker Management UI
 
-![Project Logo](./logo.png)
+<div align="center">
+  <img src="./logo.png" alt="Project Logo">
+</div>
 
 Docker Management UI is a web-based application that allows users to create shortcuts for Docker containers. Users can easily add buttons with customizable names, IP addresses of the Docker containers, and optional images. Each button provides information about the container's uptime and current state.
 
