@@ -1,19 +1,20 @@
 # Docker Management UI
 
-![Project Logo](./logo.png)
+<!-- ![Project Logo](./logo.png) -->
 
 Docker Management UI is a web-based application that allows users to create shortcuts for Docker containers. Users can easily add buttons with customizable names, IP addresses of the Docker containers, and optional images. Each button provides information about the container's uptime and current state.
 
 ## Table of Contents
 
-- [Introduction](#introduction)
-- [Features](#features)
-- [Technologies Used](#technologies-used)
-- [Installation](#installation)
-- [Usage](#usage)
-- [API Documentation](#api-documentation)
-- [Contributing](#contributing)
-- [License](#license)
+- [Docker Management UI](#docker-management-ui)
+  - [Table of Contents](#table-of-contents)
+  - [Introduction](#introduction)
+  - [Features](#features)
+  - [Technologies Used](#technologies-used)
+  - [Installation](#installation)
+  - [Usage](#usage)
+  - [Contributing](#contributing)
+  - [License](#license)
 
 ## Introduction
 
@@ -40,17 +41,18 @@ Docker Management UI provides a user-friendly interface for managing Docker cont
 ```bash
 git clone <repository-url>
 cd docker-management-ui
+```
 
 2. Install dependencies:
 
 ```bash
 npm install
-
+```
 
 3. Set up environment variables:
 - Create a `.env` file in the root directory.
 - Define the following variables in the `.env` file:
-  ```
+  ```bash
   MONGODB_URI=your-mongodb-connection-string
   ```
   Replace `your-mongodb-connection-string` with the connection string for your MongoDB database.
@@ -58,7 +60,7 @@ npm install
 4. Start the backend server:
 ```bash
 npm start
-
+```
 
 5. Open the frontend in a web browser:
 - Navigate to `http://localhost:3000` to access the Docker Management UI.
