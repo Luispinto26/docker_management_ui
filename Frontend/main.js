@@ -9,7 +9,7 @@ window.onload = function () {
     var saveBtn = document.getElementById("btnSave");
 
     saveBtn.addEventListener("click", function () {
-        saveData();
+        createCard();
     });
 
     // When the user clicks the button, open the modal 
@@ -43,33 +43,40 @@ window.onload = function () {
         reader.readAsDataURL(file);
     });
 
+    // Counter variable
+    let cardCounter = 0;
 
+    function createCard() {
 
-    // Save data from the form
-    function saveData() {
         const input1Value = document.getElementById("input1").value;
         const input2Value = document.getElementById("input2").value;
         const protocolValue = document.getElementById("protocol").value;
+        
+        // Increment the counter
+        cardCounter++;
 
         // Create a new button element
         const newButton = document.createElement("div");
-        newButton.classList.add("example-2", "card");
+        newButton.classList.add("card");
+        newButton.id = `card-${cardCounter}`;
 
         // Get the current date
-        const currentDate = new Date();
-        const day = currentDate.getDate();
-        const month = currentDate.toLocaleString('default', { month: 'short' });
-        const year = currentDate.getFullYear();
+        const currentTime = new Date();
+        const currentHour = currentTime.getHours();
+        const currentMinute = currentTime.getMinutes();
 
 
         newButton.innerHTML = `
             <div id="cardId" class="wrapper">
                 <div class="header">
                     <div class="date">
-                        <span class="day">${day}</span>
-                        <span class="month">${month}</span>
-                        <span class="year">${year}</span>
+                        <span class="day">UpTime:</span>
+                        <span class="month">${currentHour}:${currentMinute}h</span>
                     </div>
+                    <div class="settings">
+                        <i class="fas fa-cog"></i>
+                    </div>
+                    <span class="status online"></span>
                 </div>
                 <div class="data">
                     <div class="content">
@@ -90,9 +97,22 @@ window.onload = function () {
 
         // Get the container wrapper element
         const containerWrapper = document.getElementById("cardId");
-        containerWrapper.style.background = `url(${imageUrl}) center/cover no-repeat`;
+        containerWrapper.style.backgroundImage = `linear-gradient(to bottom, #383838 0%, #1F1F1F 5%, #161616 100%)`;
+        containerWrapper.style.boxShadow =  `0 0 1px 1px rgb(10,10,10)`;
+
+        
 
         // Close the modal
         closeModal();
+
+        // Save data to the server DB
+        saveData();
+    }
+
+    // Save data from the form
+    function saveData() {
+        
+
+        
     }
 };
