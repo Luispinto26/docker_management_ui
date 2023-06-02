@@ -3,6 +3,27 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 
+var Docker = require('dockerode');
+var docker = new Docker({host: 'http://192.168.1.103', port: 2375});
+
+docker.listContainers({ all: true }, (err, containers) => {
+    if (err) {
+      console.error('Error:', err);
+      return;
+    }
+    console.log(containers.length)
+    // containers.forEach((containerInfo) => {
+    //   console.log('Container ID:', containerInfo.Id);
+    //   console.log('Container Name:', containerInfo.Names);
+    //   console.log('Container State:', containerInfo.State);
+    //   console.log('Container Image:', containerInfo.Image);
+    //   console.log('Container Ports:', containerInfo.Ports);
+    //   console.log('Container Networks:', containerInfo.NetworkSettings.Networks);
+    //   console.log('--------------');
+    // });
+  });
+  
+
 require('dotenv').config();
 
 const app = express();
