@@ -1,5 +1,6 @@
 @charset "UTF-8";
 @import url(https://fonts.googleapis.com/css?family=Open+Sans:300,400,700);
+
 * {
   box-sizing: border-box;
 }
@@ -46,7 +47,6 @@ h1 {
 
 .card .wrapper {
   border-radius: 7px;
-  background-color: #fff;
   position: relative;
   height: 320px;
   overflow: hidden;
@@ -81,6 +81,7 @@ h1 {
   width: 100%;
   align-items: center;
   gap: 0.5rem;
+  background-color: rgb(77, 77, 77);
 }
 
 .header .date {
@@ -90,12 +91,12 @@ h1 {
 
 .data {
   color: #fff;
-  /* padding-bottom: 1rem; */
-  /* transform: translateY(calc(70px + 4em)); */
 }
+
 .title a {
   color: #fff;
 }
+
 .button {
   display: block;
   width: 100px;
@@ -107,6 +108,7 @@ h1 {
   position: relative;
   font-weight: 700;
 }
+
 .button::after {
   content: "→";
   opacity: 0;
@@ -116,6 +118,7 @@ h1 {
   transform: translate(0, -50%);
   transition: all 0.3s;
 }
+
 .button:hover::after {
   transform: translate(5px, -50%);
   opacity: 1;
@@ -123,13 +126,14 @@ h1 {
 
 .btn-add {
   display: flex;
+  background-color: #fff;
   align-items: center;
   justify-content: center;
   opacity: 30%;
   cursor: pointer;
 }
 
-.btn-add span{
+.btn-add span {
   font-size: 4rem;
 }
 
@@ -142,8 +146,8 @@ h1 {
   top: 0;
   width: 100%;
   height: 100%;
-  background-color: rgb(0,0,0);
-  background-color: rgba(0,0,0,0.4);
+  background-color: rgb(0, 0, 0);
+  background-color: rgba(0, 0, 0, 0.4);
 }
 
 /* Modal Content/Box */
@@ -188,7 +192,7 @@ h1 {
 :root {
   --size: 15px;
   --border: 2px;
-  --green: #72ff7d;
+  --green: #00ff15;
   --red: #ff4242;
   --yellow: #ffda72;
   --blue: #42e5ff;

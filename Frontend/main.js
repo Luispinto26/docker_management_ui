@@ -5,18 +5,24 @@ window.onload = function () {
     // Get the button that opens the modal
     var btn = document.getElementById("myBtn");
 
-    // Get Save Button
-    var saveBtn = document.getElementById("btnSave");
-
-    saveBtn.addEventListener("click", function () {
-        createCard();
-    });
-
     // When the user clicks the button, open the modal 
     btn.onclick = function () {
         modal.style.display = "block";
     }
 
+    // Get Save Button
+    var saveBtn = document.getElementById("btnSave");
+    saveBtn.addEventListener("click", function () {
+        createCard();
+    });
+    
+    // Get Save Button
+    var closeBtn = document.getElementById("btnClose");
+    closeBtn.addEventListener("click", function () {
+        closeModal()
+    });
+
+    
     // When the user clicks anywhere outside of the modal, close it
     window.onclick = function (event) {
         if (event.target == modal) {
@@ -67,7 +73,7 @@ window.onload = function () {
 
 
         newButton.innerHTML = `
-            <div id="cardId" class="wrapper">
+            <div id="${newButton.id}" class="wrapper">
                 <div class="header">
                     <div class="date">
                         <span class="day">UpTime:</span>
@@ -96,11 +102,10 @@ window.onload = function () {
         buttonsContainer.insertBefore(newButton, lastButton);
 
         // Get the container wrapper element
-        const containerWrapper = document.getElementById("cardId");
+        const containerWrapper = document.getElementById(newButton.id);
         containerWrapper.style.backgroundImage = `linear-gradient(to bottom, #383838 0%, #1F1F1F 5%, #161616 100%)`;
         containerWrapper.style.boxShadow =  `0 0 1px 1px rgb(10,10,10)`;
-
-        
+        containerWrapper.style.borderRadius = `7px`;
 
         // Close the modal
         closeModal();
@@ -111,8 +116,7 @@ window.onload = function () {
 
     // Save data from the form
     function saveData() {
-        
-
+    
         
     }
 };
