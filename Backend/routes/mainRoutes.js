@@ -4,7 +4,7 @@ const Docker = require('dockerode');
 const docker = new Docker({ host: 'http://192.168.1.103', port: 2375 });
 const router = express.Router();
 const { parseString, extractTimeFromStatus } = require('../helpers/stringParser');
-const { startContainer, restartContainer, stopContainer } = require('../helpers/dockerActions');
+const { startContainer, restartContainer, stopContainer, isImageUpdated } = require('../helpers/dockerActions');
 
 console.clear()
 
@@ -20,11 +20,8 @@ const Container = mongoose.model('Container', containerSchema);
 
 // Function to get the container ID by name
 async function getContainerIdByName(containerName) {
-  console.log('containerName',containerName)
-
   try {
     const container = await Container.findOne({ name: containerName });
-    console.log("container",container)
     if (container) {
       return container.containerId;
     } else {
@@ -55,7 +52,6 @@ router.get('/containers', async (req, res) => {
     } else {
       // Database is not empty, update or add new containers
       const containers = await docker.listContainers({ all: true });
-      console.log(containers)
 
       for (const containerInfo of containers) {
         const containerData = {
@@ -147,14 +143,14 @@ router.post('/containers/restart', (req, res) => {
 });
 
 // Stop a container by name
-router.post('/containers/stop', async (req, res) => {
-  const {containerName} = req.body;
+router.post('/containers/stop/:name', async (req, res) => {
+  const containerName = req.params.name;
 
   try {
-    console.log("name",containerName)
     const containerId = await getContainerIdByName(containerName);
 
     if (containerId) {
+      console.log(containerId)
       // Call the stopContainer function with the container ID
       stopContainer(containerId)
         .then(message => res.json({ success: true, message }))
