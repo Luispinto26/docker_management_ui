@@ -1,14 +1,18 @@
 <template>
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <Card msg="Welcome to Your Vue.js App"/>
+  <!-- <div>
+    <button @click="showModal">Open Modal</button>
+    <Modal v-if="isModalVisible" @close="closeModal" />
+  </div> -->
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import Card from './components/Card.vue'
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    Card
   }
 }
 </script>
@@ -20,5 +24,6 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   /* color: #2c3e50; */
+  background-image: linear-gradient(135deg, #aa3bb1, #582a7e);
 }
 </style>
