@@ -26,4 +26,12 @@ export default {
   /* color: #2c3e50; */
   background-image: linear-gradient(135deg, #aa3bb1, #582a7e);
 }
+
+button:disabled,
+button[disabled]{
+  user-select: none;
+  opacity: 0.3;
+  cursor: not-allowed;
+  background: black;
+}
 </style>
