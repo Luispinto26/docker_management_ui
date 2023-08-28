@@ -1,4 +1,5 @@
 <template>
+  <AppHeader/>
   <Card msg="Welcome to Your Vue.js App"/>
   <!-- <div>
     <button @click="showModal">Open Modal</button>
@@ -8,11 +9,13 @@
 
 <script>
 import Card from './components/Card.vue'
+import AppHeader from './components/AppHeader.vue';
 
 export default {
   name: 'App',
   components: {
-    Card
+    Card,
+    AppHeader
   }
 }
 </script>
