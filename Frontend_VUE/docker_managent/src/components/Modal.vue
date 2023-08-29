@@ -1,5 +1,5 @@
 <template>
-    <div class="fixed inset-0 flex justify-center items-center">
+    <div class="fixed inset-0 flex justify-center items-center z-50">
         <div class="modal-container bg-white rounded-lg p-6 shadow-lg absolute z-50">
             <h2 class="text-2xl font-semibold mb-4">Container Settings</h2>
             <div class="mb-4 flex flex-row justify-center items-center">
@@ -54,6 +54,10 @@ export default {
             type: String,
             default: ''
         },
+        cardImage: {
+            type: String,
+            default: ''
+        }
     },
 
     data() {
@@ -61,7 +65,7 @@ export default {
             ip: this.cardIp,
             port: this.cardPort,
             name: this.cardName,
-            selectedImage: '',
+            selectedImage: this.cardImage,
         };
     },
 
@@ -71,6 +75,10 @@ export default {
         }
     },
     methods: {
+        handleImageUpload(event) {
+        // Handle the file input change and save the selected image file
+        this.selectedImage = event.target.files[0];
+        },
         closeModal() {
             this.$emit('close');
         },
@@ -87,6 +95,7 @@ export default {
                 name: this.name,
                 selectedImage: this.selectedImage
             }
+
 
             // Emit an event with the updated data
             this.$emit('save-settings', updatedData)
