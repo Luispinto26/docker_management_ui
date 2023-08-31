@@ -11,15 +11,13 @@
         </button>
       </div>
       <span class="relative flex h-3 w-3 z-10">
-        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-        <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+        <span class="animate-ping absolute h-full w-full rounded-full bg-green-400 opacity-75"></span>
+        <span class="relative rounded-full h-3 w-3 bg-green-500"></span>
       </span>
     </div>
-    <div class="flex-1 ">
-      <h1 class="text-xl text-white py-2">{{ name }}</h1>
-      <div class="img-container">
-        <img class="container-img" :src="selectedImage" alt="">
-      </div>
+    <h1 class="text-xl text-white py-2 h-fit">{{ name }}</h1>
+    <div class="img-container">
+      <img class="container-img" v-if="selectedImage" :src="selectedImage" alt="">
     </div>
     <div class="footer">
       <button class="settings-button">
@@ -109,24 +107,22 @@ a {
 }
 
 .card {
-  box-shadow: 0 5px 15px rgba(19, 4, 32, 0.7);
-  background-image: linear-gradient(rgb(56, 56, 56) 0%, rgb(31, 31, 31) 5%, rgb(22, 22, 22) 100%);
-  @apply shadow-2xl border-solid border-2 border-white overflow-hidden rounded-md bg-neutral-800 w-[240px] h-[320px];
+  @apply shadow-md shadow-[#212231] overflow-hidden rounded-md bg-[#212231] w-[240px] h-[320px];
 }
 
 .card-header {
-  @apply flex justify-center items-center gap-2 p-2 bg-zinc-700 text-white
+  @apply flex justify-center items-center gap-2 p-2 bg-[#12131b] text-white
 }
 
 .img-container {
-  @apply flex-1 flex items-center justify-center;
+  @apply flex-1 flex items-center justify-center min-h-0;
 }
 
 .container-img {
-  width: 80%;
+  @apply object-contain w-full h-full;
 }
 
 .footer {
-  @apply bg-zinc-700 flex flex-row gap-x-2 p-1 justify-center;
+  @apply bg-[#12131b] flex flex-row gap-x-2 p-1 justify-center;
 }
 </style>

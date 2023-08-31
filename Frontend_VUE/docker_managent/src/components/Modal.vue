@@ -5,8 +5,7 @@
             <div class="mb-4 flex flex-row justify-center items-center">
                 <div class="w-full mr-2">
                     <label for="ip" class="block text-sm font-semibold">IP Address</label>
-                    <input type="text" v-model="ip" id="ip" placeholder="192.168.1.103"
-                        class="mt-1 p-2 border rounded-lg w-full">
+                    <input type="text" v-model="ip" id="ip" class="mt-1 p-2 border rounded-lg w-full">
                 </div>
                 <div>
                     <label for="port" class="block text-sm font-semibold">Port</label>
@@ -24,8 +23,7 @@
             <div class="flex justify-center mt-10 gap-x-2">
                 <button class="px-4 py-2 bg-orange-500 text-white rounded-lg" @click="deleteItem">Delete
                     Button</button>
-                    <button @click="closeModal"
-                    class="px-4 py-2 text-white bg-red-600 rounded-lg">
+                <button @click="closeModal" class="px-4 py-2 text-white bg-red-600 rounded-lg">
                     Close
                 </button>
                 <button class="px-4 py-2 bg-green-500 text-white rounded-lg" :disabled="!isFormFullfield"
@@ -62,9 +60,12 @@ export default {
 
     data() {
         return {
-            ip: this.cardIp,
-            port: this.cardPort,
-            name: this.cardName,
+            // ip: this.cardIp,
+            // port: this.cardPort,
+            // name: this.cardName,
+            ip: "this.cardIp",
+            port: "Port",
+            name: "this.cardName",
             selectedImage: this.cardImage,
         };
     },
@@ -76,8 +77,19 @@ export default {
     },
     methods: {
         handleImageUpload(event) {
-        // Handle the file input change and save the selected image file
-        this.selectedImage = event.target.files[0];
+            const file = event.target.files[0];
+            const reader = new FileReader();
+
+            reader.onload = () => {
+                const base64String = reader.result;
+                console.log(base64String)
+                this.selectedImage = base64String
+                // Do something with the base64String, such as store it in data or send it to the server
+            };
+
+            if (file) {
+                reader.readAsDataURL(file);
+            }
         },
         closeModal() {
             this.$emit('close');
