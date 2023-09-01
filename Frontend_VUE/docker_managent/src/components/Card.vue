@@ -20,21 +20,24 @@
       <img class="container-img" v-if="selectedImage" :src="selectedImage" alt="">
     </div>
     <div class="footer">
-      <button class="settings-button">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+      <button class="power-options-buttons bg-[#f2cc8f]">
+        <svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24">
           <path
             d="M9 12l-4.463 4.969-4.537-4.969h3c0-4.97 4.03-9 9-9 2.395 0 4.565.942 6.179 2.468l-2.004 2.231c-1.081-1.05-2.553-1.699-4.175-1.699-3.309 0-6 2.691-6 6h3zm10.463-4.969l-4.463 4.969h3c0 3.309-2.691 6-6 6-1.623 0-3.094-.65-4.175-1.699l-2.004 2.231c1.613 1.526 3.784 2.468 6.179 2.468 4.97 0 9-4.03 9-9h3l-4.537-4.969z" />
         </svg>
+        <!-- <p class="text-xs font-bold">Restart</p> -->
       </button>
-      <button class="settings-button">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+      <button class="power-options-buttons bg-[#e07a5f]">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24">
           <path d="M2 2h20v20h-20z" />
         </svg>
+        <!-- <p class="text-xs font-bold">Stop</p> -->
       </button>
-      <button class="settings-button">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+      <button class="power-options-buttons bg-green-400">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24">
           <path d="M3 22v-20l18 10-18 10z" />
         </svg>
+        <!-- <p class="text-xs font-bold">Start</p> -->
       </button>
     </div>
   </div>
@@ -53,8 +56,7 @@ export default {
   },
   data() {
     return {
-      ip: '', // Initialize with default values
-      port: '',
+      port: '1000',
       name: '',
       status: {
         value: 3,
@@ -64,6 +66,13 @@ export default {
       isModalVisible: false, // Add this property to control modal visibility
     };
   },
+
+  computed: {
+    ip() {
+      return this.$root.$data.serverIp;
+    }
+  },
+
   methods: {
     openModal() {
       this.isModalVisible = true;
@@ -103,7 +112,11 @@ a {
 }
 
 .settings-button {
-  @apply p-1 rounded-md bg-gray-200 hover:bg-gray-300 focus:outline-none;
+  @apply p-1 rounded-md bg-[#ffe8c7] hover:bg-gray-300 focus:outline-none;
+}
+
+.power-options-buttons {
+  @apply rounded-md focus:outline-none w-7 h-7 flex items-center justify-center;
 }
 
 .card {
@@ -119,10 +132,10 @@ a {
 }
 
 .container-img {
-  @apply object-contain w-full h-full;
+  @apply object-cover w-full h-full;
 }
 
 .footer {
-  @apply bg-[#12131b] flex flex-row gap-x-2 p-1 justify-center;
+  @apply bg-[#12131b] flex flex-row gap-x-2 p-1 justify-end px-2.5 py-1.5;
 }
 </style>

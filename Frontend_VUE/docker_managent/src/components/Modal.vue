@@ -60,12 +60,9 @@ export default {
 
     data() {
         return {
-            // ip: this.cardIp,
-            // port: this.cardPort,
-            // name: this.cardName,
-            ip: "this.cardIp",
-            port: "Port",
-            name: "this.cardName",
+            ip: this.cardIp,
+            port: this.cardPort,
+            name: this.cardName,
             selectedImage: this.cardImage,
         };
     },
