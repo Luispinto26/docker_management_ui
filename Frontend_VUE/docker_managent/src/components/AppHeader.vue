@@ -4,7 +4,7 @@
         <div class="flex items-center space-x-4">
 
             <!-- Input for Server IP -->
-            <div class="bg-[#f2cc8f] hover:bg-[#f8d69e] rounded-lg px-4 py-4 flex items-center gap-x-2">
+            <div class="bg-[#f2cc8f] rounded-lg px-4 py-4 flex items-center gap-x-2">
                 <div class="bg-[#e07a5f] rounded-lg w-14 h-14 flex items-center justify-center p-2 relative">
                     <div class="h-2 w-2 bg-green-400 rounded-full absolute top-1.5 right-1.5"></div>
                     <img src="../assets/images/server_icon.svg" alt="" class="w-full">
@@ -32,29 +32,52 @@
             </div>
 
             <!-- New Card Button-->
-            <button class="bg-green-400 rounded-lg px-4 py-4 gap-x-2 h-full flex items-center">
+            <button class="bg-green-400 hover:bg-green-500 rounded-lg px-4 py-4 gap-x-2 h-full flex items-center">
                 <img src="../assets/images/plus_square_icon.svg" alt="" class="h-10 opacity-20">
                 <p class="font-semibold leading-4 text-gray-900">Add New<br>Card</p>
             </button>
 
-            <!-- Auto Scan Button-->
-            <button class="bg-[#ffe8c7] rounded-lg px-4 py-4 gap-x-2 h-full flex items-center">
-                <img src="../assets/images/magnifier_icon.svg" alt="" class="opacity-20 h-10">
-                <p class="text-2xl font-semibold leading-5 text-gray-900">Auto<br>Scan</p>
-            </button>
+            <div class="relative h-full">
+                <!-- Auto Scan Button-->
+                <button class="bg-[#ffe8c7] hover:bg-[#fcd6a1] rounded-lg px-4 py-4 gap-x-2 h-full flex items-center"
+                    @click="startScan">
+                    <img :src="autoScanIcon" alt="" class="h-10 " :class="isScanning ? 'button-rotate' : 'opacity-20'">
+                    <p class="text-2xl font-semibold leading-5 text-gray-900 ">Auto<br>Scan</p>
+                </button>
+                <ContainerBox v-if="scanningFinished" />
+            </div>
         </div>
 
     </header>
 </template>
   
 <script>
+import ContainerBox from "./ContainerBox.vue";
+import LoadingIcon from '../assets/images/loading_icon.svg';
+import MagnifierIcon from '../assets/images/magnifier_icon.svg';
+import {autoScan} from '../api/container.js';
+
+
 export default {
     name: 'AppHeader',
 
     data() {
         return {
-            serverIpInput: ''
+            serverIpInput: '',
+            isScanning: false,
+            scanningFinished: []
         }
+    },
+
+    computed: {
+        autoScanIcon() {
+            return this.isScanning ? LoadingIcon : MagnifierIcon;
+        }
+    },
+
+
+    components: {
+        ContainerBox
     },
 
     emits: ['updateServerIp'],
@@ -66,6 +89,18 @@ export default {
     methods: {
         updateServerIp() {
             this.$emit('updateServerIp', this.serverIpInput);
+        },
+        startScan() {
+            this.isScanning = !this.isScanning;
+        },
+        async fetchSomeData() {
+            try {
+                const response = await autoScan();
+                this.responseData = response.data;
+                console.log('Data fetched:', this.responseData);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
         }
     }
 
@@ -76,6 +111,20 @@ export default {
 input:focus,
 input:focus-visible {
     outline: #e07a5f solid 2px;
+}
+
+@keyframes rotate {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.button-rotate {
+    animation: rotate 2s linear infinite;
 }
 </style>
   

@@ -21,12 +21,12 @@
                 <input type="file" @change="handleImageUpload" id="image" class="mt-5">
             </div>
             <div class="flex justify-center mt-10 gap-x-2">
-                <button class="px-4 py-2 bg-orange-500 text-white rounded-lg" @click="deleteItem">Delete
+                <button class="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg" @click="deleteItem">Delete
                     Button</button>
-                <button @click="closeModal" class="px-4 py-2 text-white bg-red-600 rounded-lg">
+                <button @click="closeModal" class="px-4 py-2 text-white bg-red-500 hover:bg-red-600 rounded-lg">
                     Close
                 </button>
-                <button class="px-4 py-2 bg-green-500 text-white rounded-lg" :disabled="!isFormFullfield"
+                <button class="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg" :disabled="!isFormFullfield"
                     @click="saveChanges">Save Settings</button>
             </div>
         </div>
@@ -79,7 +79,6 @@ export default {
 
             reader.onload = () => {
                 const base64String = reader.result;
-                console.log(base64String)
                 this.selectedImage = base64String
                 // Do something with the base64String, such as store it in data or send it to the server
             };
