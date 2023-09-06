@@ -4,7 +4,7 @@ const Docker = require('dockerode');
 const docker = new Docker({ host: 'http://192.168.1.103', port: 2375 });
 const router = express.Router();
 const { parseString, extractTimeFromStatus } = require('../helpers/stringParser');
-const { startContainer, restartContainer, stopContainer, isImageUpdated } = require('../helpers/dockerActions');
+const { startContainer, restartContainer, stopContainer } = require('../helpers/dockerActions');
 
 console.clear()
 

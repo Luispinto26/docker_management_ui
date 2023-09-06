@@ -55,7 +55,7 @@
 import ContainerBox from "./ContainerBox.vue";
 import LoadingIcon from '../assets/images/loading_icon.svg';
 import MagnifierIcon from '../assets/images/magnifier_icon.svg';
-import {autoScan} from '../api/container.js';
+import {autoScan} from '@/api/containers.js';
 
 
 export default {
