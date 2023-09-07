@@ -14,6 +14,7 @@ const containerSchema = new mongoose.Schema({
   containerId: String,
   state: String,
   status: Object,
+  containerPort: Number
 }, { versionKey: false });
 
 const Container = mongoose.model('Container', containerSchema);
@@ -36,21 +37,28 @@ async function getContainerIdByName(containerName) {
 // Define API routes
 router.get('/containers', async (req, res) => {
   try {
-    const count = await Container.countDocuments();
+    let count = await Container.countDocuments();
+    let newContainersCount = 0
 
-    if (count === 0) {
-      // Database is empty, fetch latest information
-      const containers = await docker.listContainers({ all: true });
-      const containerData = containers.map(containerInfo => ({
-        name: parseString(containerInfo.Names),
-        containerId: containerInfo.Id,
-        state: containerInfo.State,
-        status: extractTimeFromStatus(containerInfo.Status)
-      }));
-      await Container.insertMany(containerData);
 
-    } else {
-      // Database is not empty, update or add new containers
+    // if (count === 0) {
+    // Database is empty, fetch latest information
+    // const containers = await docker.listContainers({ all: true });
+    // const containerData = containers.map(containerInfo => ({
+    //   name: parseString(containerInfo.Names),
+    //   containerId: containerInfo.Id,
+    //   state: containerInfo.State,
+    //   status: extractTimeFromStatus(containerInfo.Status),
+    //   containerPort: 0000
+    // }));
+    // for (const containerInfo of containers) {
+    //   count++
+    // }
+    // console.log(count)
+    // await Container.insertMany(containerData);
+
+    // } else {
+    //   // Database is not empty, update or add new containers
       const containers = await docker.listContainers({ all: true });
 
       for (const containerInfo of containers) {
@@ -73,11 +81,12 @@ router.get('/containers', async (req, res) => {
           // Container does not exist, create a new document in the database
           const newContainer = new Container(containerData);
           await newContainer.save();
+          newContainersCount++
         }
       }
-    }
+    // }
 
-    res.json({ message: 'Container information updated successfully' });
+    res.json({ message: 'Container information updated successfully', totalContainer: count, newContainersCount: newContainersCount });
   } catch (error) {
     console.error('Error:', error);
     res.status(500).json({ message: 'Failed to update the database' });
@@ -107,13 +116,39 @@ router.get('/containers/:name', async (req, res) => {
 
   try {
     const containerId = await getContainerIdByName(containerName);
+    const containerInfo = await Container.findOne({ name: containerName });
 
     if (containerId) {
       // Retrieve the ID from the container object
-      res.json({ name: containerName, id: containerId });
+      res.json({ name: containerName, id: containerId, status: containerInfo.status, state: containerInfo.state });
     } else {
       res.status(404).json({ error: 'Container not found' });
     }
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+router.post('/containers/updatePort/:name', async (req, res) => {
+  const containerName = req.params.name;
+  const newPort = req.body.port;
+  
+  try {
+    // Find the container by name
+    const container = await Container.findOne({ name: containerName });
+
+    if (!container) {
+      return res.status(404).json({ error: 'Container not found' });
+    }
+
+    // Update the containerPort field
+    container.containerPort = newPort;
+    
+    // Save the updated document
+    await container.save();
+
+    res.status(200).json({ message: 'Container port updated successfully', container });
   } catch (error) {
     console.error('Error:', error);
     res.status(500).json({ error: 'Internal Server Error' });
