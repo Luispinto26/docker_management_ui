@@ -120,7 +120,7 @@ router.get('/containers/:name', async (req, res) => {
 
     if (containerId) {
       // Retrieve the ID from the container object
-      res.json({ name: containerName, id: containerId, status: containerInfo.status, state: containerInfo.state });
+      res.json({message: `${containerName} Info fetched successfully`, containerInfo });
     } else {
       res.status(404).json({ error: 'Container not found' });
     }
