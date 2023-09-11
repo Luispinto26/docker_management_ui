@@ -1,8 +1,8 @@
 <template>
   <div id="app" class="min-h-screen flex flex-col justify-between">
-    <AppHeader @update-server-ip="updateServerIpHandler"/>
-    <div class="justify-center flex items-center flex-wrap gap-4">
-        <Card v-for="n in 5" :key="n"/>
+    <AppHeader @update-server-ip="updateServerIpHandler" />
+    <div class="justify-center flex items-center flex-wrap gap-8">
+      <Card v-for="(card, index) in cardsInfo" :key="index" :cardInfo="card" />
     </div>
     <AppFooter />
   </div>
@@ -12,6 +12,7 @@
 import Card from './components/Card.vue';
 import AppHeader from './components/AppHeader.vue';
 import AppFooter from './components/AppFooter.vue';
+import {autoScan} from './api/containers';
 
 export default {
   name: 'App',
@@ -23,20 +24,28 @@ export default {
   },
   data() {
     return {
-      serverIp: '192.168.1.103'
+      serverIp: '192.168.1.103',
+      cardsInfo: []
     }
   },
-
+  mounted() {
+    autoScan()
+      .then(response => {
+        this.cardsInfo = response.data.ContainersList;
+      })
+      .catch(error => {
+        console.error('Erro ao buscar cartões:', error);
+      });
+  },
   methods: {
     updateServerIpHandler(ip) {
       this.serverIp = ip;
     }
-  } 
+  }
 }
 </script>
 
 <style lang="postcss">
-
 * {
   box-sizing: border-box;
 
@@ -64,5 +73,4 @@ button[disabled] {
   cursor: not-allowed;
   background: black;
 }
-
 </style>

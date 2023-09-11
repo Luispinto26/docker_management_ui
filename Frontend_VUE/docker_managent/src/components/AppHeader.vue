@@ -44,7 +44,7 @@
                     <img :src="autoScanIcon" alt="" class="h-10 " :class="isScanning ? 'button-rotate' : 'opacity-20'">
                     <p class="text-2xl font-semibold leading-5 text-gray-900 ">Auto<br>Scan</p>
                 </button>
-                <ContainerBox v-if="scanningFinished" />
+                <ContainerBox v-if="scanningFinished.length > 0" />
             </div>
         </div>
 

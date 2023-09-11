@@ -14,7 +14,8 @@ const containerSchema = new mongoose.Schema({
   containerId: String,
   state: String,
   status: Object,
-  containerPort: Number
+  containerPort: Number,
+  visible: Boolean
 }, { versionKey: false });
 
 const Container = mongoose.model('Container', containerSchema);
@@ -40,53 +41,36 @@ router.get('/containers', async (req, res) => {
     let count = await Container.countDocuments();
     let newContainersCount = 0
 
+    const containers = await docker.listContainers({ all: true });
 
-    // if (count === 0) {
-    // Database is empty, fetch latest information
-    // const containers = await docker.listContainers({ all: true });
-    // const containerData = containers.map(containerInfo => ({
-    //   name: parseString(containerInfo.Names),
-    //   containerId: containerInfo.Id,
-    //   state: containerInfo.State,
-    //   status: extractTimeFromStatus(containerInfo.Status),
-    //   containerPort: 0000
-    // }));
-    // for (const containerInfo of containers) {
-    //   count++
-    // }
-    // console.log(count)
-    // await Container.insertMany(containerData);
+    for (const containerInfo of containers) {
+      const containerData = {
+        name: parseString(containerInfo.Names),
+        containerId: containerInfo.Id,
+        state: containerInfo.State,
+        status: extractTimeFromStatus(containerInfo.Status),
+        containerPort: null,
+        visible: true
+      };
 
-    // } else {
-    //   // Database is not empty, update or add new containers
-      const containers = await docker.listContainers({ all: true });
+      // Find the container in the database by name
+      const existingContainer = await Container.findOne({ name: containerData.name });
 
-      for (const containerInfo of containers) {
-        const containerData = {
-          name: parseString(containerInfo.Names),
-          containerId: containerInfo.Id,
-          state: containerInfo.State,
-          status: extractTimeFromStatus(containerInfo.Status)
-        };
-
-        // Find the container in the database by name
-        const existingContainer = await Container.findOne({ name: containerData.name });
-
-        if (existingContainer) {
-          // Container already exists, update its state and status
-          existingContainer.state = containerData.state;
-          existingContainer.status = containerData.status;
-          await existingContainer.save();
-        } else {
-          // Container does not exist, create a new document in the database
-          const newContainer = new Container(containerData);
-          await newContainer.save();
-          newContainersCount++
-        }
+      if (existingContainer) {
+        // Container already exists, update its state and status
+        existingContainer.state = containerData.state;
+        existingContainer.status = containerData.status;
+        await existingContainer.save();
+      } else {
+        // Container does not exist, create a new document in the database
+        const newContainer = new Container(containerData);
+        await newContainer.save();
+        newContainersCount++
       }
-    // }
+    }
+    const allContainers = await Container.find();
 
-    res.json({ message: 'Container information updated successfully', totalContainer: count, newContainersCount: newContainersCount });
+    res.json({ message: 'Container information updated successfully', totalContainer: count, newContainersCount: newContainersCount, ContainersList: allContainers });
   } catch (error) {
     console.error('Error:', error);
     res.status(500).json({ message: 'Failed to update the database' });
@@ -120,7 +104,7 @@ router.get('/containers/:name', async (req, res) => {
 
     if (containerId) {
       // Retrieve the ID from the container object
-      res.json({message: `${containerName} Info fetched successfully`, containerInfo });
+      res.json({ message: `${containerName} Info fetched successfully`, containerInfo });
     } else {
       res.status(404).json({ error: 'Container not found' });
     }
@@ -133,7 +117,7 @@ router.get('/containers/:name', async (req, res) => {
 router.post('/containers/updatePort/:name', async (req, res) => {
   const containerName = req.params.name;
   const newPort = req.body.port;
-  
+
   try {
     // Find the container by name
     const container = await Container.findOne({ name: containerName });
@@ -144,7 +128,7 @@ router.post('/containers/updatePort/:name', async (req, res) => {
 
     // Update the containerPort field
     container.containerPort = newPort;
-    
+
     // Save the updated document
     await container.save();
 

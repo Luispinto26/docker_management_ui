@@ -2,7 +2,7 @@
   <div class="card flex flex-col min-h-0">
     <div class="card-header">
       <div class="text-sm font-light">
-        <p><span class="font-bold">Uptime:</span> {{ status.value }} {{ status.unit }}</p>
+        <p><span class="font-bold">Uptime:</span> {{ cardInfo.status.value }} {{ cardInfo.status.unit }}</p>
         <p><span class="font-bold">IP:</span> {{ ip && port ? ip + ':' + port : '' }}</p>
       </div>
       <div class="settings">
@@ -15,7 +15,7 @@
         <span class="relative rounded-full h-3 w-3 bg-green-500"></span>
       </span>
     </div>
-    <h1 class="text-xl text-white py-1 h-fit">{{ name }}</h1>
+    <h1 class="text-xl text-white py-1 h-fit">{{ cardInfo.name }}</h1>
     <div class="img-container">
       <img class="container-img" v-if="selectedImage" :src="selectedImage" alt="">
       <img class="container-img" v-else src="../assets/images/placeholder_image.png" alt="">
@@ -64,7 +64,9 @@ export default {
       isModalVisible: false, // Add this property to control modal visibility
     };
   },
-
+  props: {
+    cardInfo: Object, 
+  },
   computed: {
     ip() {
       return this.$root.$data.serverIp;
