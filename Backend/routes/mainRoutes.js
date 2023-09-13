@@ -11,10 +11,10 @@ console.clear()
 // Define the container schema and model
 const containerSchema = new mongoose.Schema({
   name: String,
+  cardInfo: Object,
   containerId: String,
   state: String,
-  status: Object,
-  containerPort: Number,
+  runtime: Object,
   visible: Boolean
 }, { versionKey: false });
 
@@ -38,8 +38,12 @@ async function getContainerIdByName(containerName) {
 // Define API routes
 router.get('/containers', async (req, res) => {
   try {
-    let count = await Container.countDocuments();
-    let newContainersCount = 0
+    let totalContainerInfo = {
+      active: 0,
+      exited: 0,
+      hidden: 0,
+      new: 0
+    }
 
     const containers = await docker.listContainers({ all: true });
 
@@ -48,9 +52,7 @@ router.get('/containers', async (req, res) => {
         name: parseString(containerInfo.Names),
         containerId: containerInfo.Id,
         state: containerInfo.State,
-        status: extractTimeFromStatus(containerInfo.Status),
-        containerPort: null,
-        visible: true
+        runtime: extractTimeFromStatus(containerInfo.Status),
       };
 
       // Find the container in the database by name
@@ -59,18 +61,31 @@ router.get('/containers', async (req, res) => {
       if (existingContainer) {
         // Container already exists, update its state and status
         existingContainer.state = containerData.state;
-        existingContainer.status = containerData.status;
+        existingContainer.runtime = containerData.runtime;
         await existingContainer.save();
       } else {
         // Container does not exist, create a new document in the database
         const newContainer = new Container(containerData);
         await newContainer.save();
-        newContainersCount++
+        if (newContainer.state === 'running') {
+          totalContainerInfo.active++
+        }
+        totalContainerInfo.new++
+      }
+      if (existingContainer) {
+        if (existingContainer.state === 'running') {
+          totalContainerInfo.active++
+        } else {
+          totalContainerInfo.exited++
+        }
+        if (existingContainer.visible == false) {
+          totalContainerInfo.hidden++
+        }
       }
     }
     const allContainers = await Container.find();
 
-    res.json({ message: 'Container information updated successfully', totalContainer: count, newContainersCount: newContainersCount, ContainersList: allContainers });
+    res.json({ message: 'Container information updated successfully', containersCountInfo: totalContainerInfo, ContainersList: allContainers });
   } catch (error) {
     console.error('Error:', error);
     res.status(500).json({ message: 'Failed to update the database' });
@@ -114,7 +129,7 @@ router.get('/containers/:name', async (req, res) => {
   }
 });
 
-router.post('/containers/updatePort/:name', async (req, res) => {
+router.post('/containers/updateCard/:name', async (req, res) => {
   const containerName = req.params.name;
   const newPort = req.body.port;
 
@@ -138,8 +153,6 @@ router.post('/containers/updatePort/:name', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
-
-
 
 // Start a container by name
 router.post('/containers/start', (req, res) => {
@@ -183,5 +196,12 @@ router.post('/containers/stop/:name', async (req, res) => {
   }
 });
 
+router.get('/ping', async (req, res) => {
+  try {
+    res.status(200).json({ message: 'Server access successfully!!' });
+  } catch (error) {
+    res.status(500).json({ message: 'Server Offline' })
+  }
+});
 
 module.exports = router;

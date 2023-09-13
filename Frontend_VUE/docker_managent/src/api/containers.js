@@ -1,5 +1,11 @@
 import {httpRequest} from '@/helpers/httpClient.js';
 
-export function autoScan() {
+function getAllContainersInfo() {
     return httpRequest.get('/containers')
 }
+
+function pingServerResquest() {
+    return httpRequest.get('/ping')
+}
+
+export {getAllContainersInfo, pingServerResquest}

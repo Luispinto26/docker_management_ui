@@ -2,7 +2,7 @@
   <div class="card flex flex-col min-h-0">
     <div class="card-header">
       <div class="text-sm font-light">
-        <p><span class="font-bold">Uptime:</span> {{ cardInfo.status.value }} {{ cardInfo.status.unit }}</p>
+        <p><span class="font-bold">Uptime:</span> {{ cardInfo.runtime.value }} {{ cardInfo.runtime.unit }}</p>
         <p><span class="font-bold">IP:</span> {{ ip && port ? ip + ':' + port : '' }}</p>
       </div>
       <div class="settings">

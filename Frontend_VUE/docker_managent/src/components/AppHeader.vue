@@ -6,7 +6,7 @@
             <!-- Input for Server IP -->
             <div class="bg-[#f2cc8f] rounded-lg px-4 py-4 flex items-center gap-x-2">
                 <div class="bg-[#e07a5f] rounded-lg w-14 h-14 flex items-center justify-center p-2 relative">
-                    <div class="h-2 w-2 bg-green-400 rounded-full absolute top-1.5 right-1.5"></div>
+                    <div class="h-2 w-2 rounded-full absolute top-1.5 right-1.5" :class="pingDuration ? 'bg-green-400' : 'bg-[#ff0000]'"></div>
                     <img src="../assets/images/server_icon.svg" alt="" class="w-full">
                 </div>
                 <div class="text-gray-900">
@@ -17,17 +17,19 @@
 
                         <img src="../assets/images/edit_icon.svg" alt="" class="w-3 -ml-4">
                     </div>
-                    <p class="text-xs text-left">Online Ping: 123 ms</p>
+                    <p class="text-xs text-left w-32">{{pingDuration}}</p>
                 </div>
             </div>
 
             <!-- Button with number of containers active -->
-            <div class="bg-[#f2cc8f] rounded-lg px-4 py-4 flex gap-x-2">
-                <div class="bg-[#e07a5f] rounded-lg w-14 h-14 flex items-center justify-center p-2 relative">
+            <div class="bg-[#f2cc8f] rounded-lg px-4 py-4 flex items-center gap-x-2">
+                <div class="bg-[#e07a5f] rounded-lg w-14 h-14 flex justify-center p-2 relative">
                     <img src="../assets/images/docker_icon.svg" alt="" class="w-full">
                 </div>
-                <div class="text-gray-900 flex items-center">
-                    <p class="font-semibold text-left leading-4">25 Active<br>Containers</p>
+                <div class="text-gray-900">
+                    <p class="font-semibold text-left leading-4">{{containersCount.active}} Active<br>Containers</p>
+                    <p class="text-xs text-left leading-3">{{containersCount.hidden}} Hidden</p>
+                    <p class="text-xs text-left leading-3">{{containersCount.exited}} Exited</p>
                 </div>
             </div>
 
@@ -65,8 +67,13 @@ export default {
         return {
             serverIpInput: '',
             isScanning: false,
-            scanningFinished: []
+            scanningFinished: [],
         }
+    },
+
+    props: {
+        containersCount: Object,
+        pingDuration: String
     },
 
     computed: {
@@ -74,7 +81,6 @@ export default {
             return this.isScanning ? LoadingIcon : MagnifierIcon;
         }
     },
-
 
     components: {
         ContainerBox

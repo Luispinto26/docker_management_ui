@@ -1,7 +1,7 @@
 <template>
   <div id="app" class="min-h-screen flex flex-col justify-between">
-    <AppHeader @update-server-ip="updateServerIpHandler" />
-    <div class="justify-center flex items-center flex-wrap gap-8">
+    <AppHeader @update-server-ip="updateServerIpHandler" :containersCount="totalContainersInfo" :pingDuration="pingDuration" />
+    <div class="flex items-center flex-wrap gap-8 w-[85%] mx-auto">
       <Card v-for="(card, index) in cardsInfo" :key="index" :cardInfo="card" />
     </div>
     <AppFooter />
@@ -12,7 +12,7 @@
 import Card from './components/Card.vue';
 import AppHeader from './components/AppHeader.vue';
 import AppFooter from './components/AppFooter.vue';
-import {autoScan} from './api/containers';
+import { getAllContainersInfo, pingServerResquest } from './api/containers';
 
 export default {
   name: 'App',
@@ -25,21 +25,50 @@ export default {
   data() {
     return {
       serverIp: '192.168.1.103',
-      cardsInfo: []
+      cardsInfo: [],
+      totalContainersInfo: {},
+      pingDuration: ''
     }
   },
-  mounted() {
-    autoScan()
+  created() {
+    getAllContainersInfo()
       .then(response => {
+        console.log(response.data)
+        this.totalContainersInfo = response.data.containersCountInfo
         this.cardsInfo = response.data.ContainersList;
       })
       .catch(error => {
-        console.error('Erro ao buscar cartões:', error);
-      });
+        console.error('Error fetching cards:', error);
+      })
+    this.pingServer();
+    this.pingInterval = setInterval(() => {
+      this.pingServer();
+    }, 1000);
+  },
+  mounted() {
+
+  },
+  beforeUnmount() {
+    clearInterval(this.pingInterval);
   },
   methods: {
     updateServerIpHandler(ip) {
       this.serverIp = ip;
+    },
+    pingServer() {
+      const startTime = performance.now();
+      pingServerResquest()
+        .then(response => {
+          console.log(response)
+          const endTime = performance.now();
+          const pingDuration = endTime - startTime;
+          this.pingDuration = `Ping duration: ${pingDuration.toFixed(2)} ms`
+          console.log(`Ping duration: ${pingDuration.toFixed(2)} ms`);
+        })
+        .catch(error => {
+          this.pingDuration = null
+          console.error('Error:', error);
+        });
     }
   }
 }
