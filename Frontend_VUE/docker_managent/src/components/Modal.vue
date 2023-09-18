@@ -13,8 +13,13 @@
                 </div>
             </div>
             <div class="mb-4">
-                <label for="name" class="block text-sm font-semibold">Name</label>
+                <label for="name" class="block text-sm font-semibold">Card Name</label>
                 <input type="text" v-model="name" id="name" class="mt-1 p-2 border rounded-lg w-full">
+            </div>
+            <div class="mb-4">
+                <label for="name" class="block text-sm font-semibold">Name for Image API</label>
+                <a href="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons@latest/png/" target="_blank">Click Here to find container name on image list</a>
+                <input type="text" v-model="imageName" id="name" class="mt-1 p-2 border rounded-lg w-full">
             </div>
             <div class="mb-4">
                 <label for="image" class="block text-sm font-semibold">Upload Button Image</label>
@@ -63,6 +68,7 @@ export default {
             ip: this.cardIp,
             port: this.cardPort,
             name: this.cardName,
+            imageName: '',
             selectedImage: this.cardImage,
         };
     },

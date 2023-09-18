@@ -14,8 +14,7 @@
                     <div class="flex">
                         <input class="bg-[#ffe8c7] text-xs rounded-md px-1 w-28 py-0.5 focus:border-[#e07a5f]"
                             v-model="serverIpInput" @blur="updateServerIp" @keyup.enter="$event.target.blur()" />
-
-                        <img src="../assets/images/edit_icon.svg" alt="" class="w-3 -ml-4">
+                        <img src="../assets/images/edit_icon.svg" alt="" class="w-3 -ml-4 ">
                     </div>
                     <p class="text-xs text-left w-32">{{pingDuration}}</p>
                 </div>
@@ -57,7 +56,7 @@
 import ContainerBox from "./ContainerBox.vue";
 import LoadingIcon from '../assets/images/loading_icon.svg';
 import MagnifierIcon from '../assets/images/magnifier_icon.svg';
-import {autoScan} from '@/api/containers.js';
+// import {autoScan} from '@/api/containers.js';
 
 
 export default {
@@ -99,15 +98,15 @@ export default {
         startScan() {
             this.isScanning = !this.isScanning;
         },
-        async fetchSomeData() {
-            try {
-                const response = await autoScan();
-                this.responseData = response.data;
-                console.log('Data fetched:', this.responseData);
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            }
-        }
+        // async fetchSomeData() {
+        //     try {
+        //         const response = await autoScan();
+        //         this.responseData = response.data;
+        //         console.log('Data fetched:', this.responseData);
+        //     } catch (error) {
+        //         console.error('Error fetching data:', error);
+        //     }
+        // }
     }
 
 };

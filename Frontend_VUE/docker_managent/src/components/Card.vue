@@ -18,7 +18,7 @@
     <h1 class="text-xl text-white py-1 h-fit">{{ cardInfo.name }}</h1>
     <div class="img-container">
       <img class="container-img" v-if="selectedImage" :src="selectedImage" alt="">
-      <img class="container-img" v-else src="../assets/images/placeholder_image.png" alt="">
+      <img class="container-img" v-else :src="getContainerIconUrl(cardInfo.name)" alt="">
     </div>
     <div class="footer">
       <button class="power-options-buttons bg-[#f2cc8f] hover:bg-gray-300">
@@ -40,7 +40,7 @@
     </div>
   </div>
 
-  <ModalComponent v-if="isModalVisible" :cardIp="ip" :cardPort="port" :cardName="name" :cardImage="selectedImage"
+  <ModalComponent v-if="isModalVisible" :cardIp="ip" :cardPort="port" :cardName="cardInfo.name" :cardImage="selectedImage"
     @close="closeModal" @save-settings="updateData" />
 </template>
 
@@ -54,8 +54,8 @@ export default {
   },
   data() {
     return {
-      port: '1000',
-      name: 'Container Name',
+      port: '',
+      name: '',
       status: {
         value: 3,
         unit: 'hours'
@@ -86,6 +86,10 @@ export default {
       this.port = updatedData.port;
       this.name = updatedData.name;
       this.selectedImage = updatedData.selectedImage;
+    },
+    getContainerIconUrl(containerName) {
+      const formattedName = containerName.charAt(0).toLowerCase() + containerName.slice(1);
+      return `https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/${formattedName}.png`;
     }
   }
 }
@@ -132,7 +136,7 @@ a {
 }
 
 .container-img {
-  @apply object-cover w-full h-full;
+  @apply object-contain w-full h-full p-4;
 }
 
 .footer {

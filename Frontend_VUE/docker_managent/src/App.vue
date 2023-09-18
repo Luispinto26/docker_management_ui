@@ -1,26 +1,31 @@
 <template>
-  <div id="app" class="min-h-screen flex flex-col justify-between">
+  <div id="app" class="min-h-screen flex flex-col">
     <AppHeader @update-server-ip="updateServerIpHandler" :containersCount="totalContainersInfo" :pingDuration="pingDuration" />
-    <div class="flex items-center flex-wrap gap-8 w-[85%] mx-auto">
-      <Card v-for="(card, index) in cardsInfo" :key="index" :cardInfo="card" />
+
+    <div class="flex-1">
+      <CollapseTab :cardsInfo="cardsInfo"/>
+      <CollapseTab :cardsInfo="cardsInfo"/>
     </div>
-    <AppFooter />
+
+    <AppFooter/>
   </div>
 </template>
 
 <script>
-import Card from './components/Card.vue';
+
 import AppHeader from './components/AppHeader.vue';
 import AppFooter from './components/AppFooter.vue';
+import CollapseTab from './components/CollapseTab.vue';
+
 import { getAllContainersInfo, pingServerResquest } from './api/containers';
 
 export default {
   name: 'App',
 
   components: {
-    Card,
     AppHeader,
-    AppFooter
+    AppFooter,
+    CollapseTab
   },
   data() {
     return {
@@ -58,12 +63,10 @@ export default {
     pingServer() {
       const startTime = performance.now();
       pingServerResquest()
-        .then(response => {
-          console.log(response)
+        .then(() => {
           const endTime = performance.now();
           const pingDuration = endTime - startTime;
           this.pingDuration = `Ping duration: ${pingDuration.toFixed(2)} ms`
-          console.log(`Ping duration: ${pingDuration.toFixed(2)} ms`);
         })
         .catch(error => {
           this.pingDuration = null
@@ -102,4 +105,68 @@ button[disabled] {
   cursor: not-allowed;
   background: black;
 }
+
+/* Define the styles for WebKit (Chrome, Safari, Opera) */
+::-webkit-scrollbar {
+  width: 8px; /* Width of the scrollbar */
+  background-color: #3d405b;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #fcd6a1; /* Color of the thumb (the draggable part) */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #ffe8c7; /* Color when hovered */
+}
+
+/* Define the styles for Firefox */
+/* Firefox doesn't support scrollbar width customization directly */
+/* So, we can only style the scrollbar thumb and track */
+/* Use -moz-scrollbar for older versions of Firefox */
+/* Firefox 64+ supports scrollbar-width property */
+/* Uncomment the scrollbar-width property if using Firefox 64+ */
+/*
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #4caf50 #f1f1f1;
+}
+
+*::-webkit-scrollbar {
+  width: 10px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: #4caf50;
+  border-radius: 5px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: #45a049;
+}
+*/
+
+/* Define the styles for Edge and IE */
+/* Edge and IE support scrollbar width customization */
+/* Uncomment these styles if needed */
+/*
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #4caf50 #f1f1f1;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #4caf50;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #45a049;
+}
+*/
+
 </style>
