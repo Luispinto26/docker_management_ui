@@ -15,10 +15,10 @@
         <span class="relative rounded-full h-3 w-3 bg-green-500"></span>
       </span>
     </div>
-    <h1 class="text-xl text-white py-1 h-fit">{{ cardInfo.name }}</h1>
+    <h1 class="text-xl text-white py-1 h-fit">{{ name || cardInfo.name }}</h1>
     <div class="img-container">
       <img class="container-img" v-if="selectedImage" :src="selectedImage" alt="">
-      <img class="container-img" v-else :src="getContainerIconUrl(cardInfo.name)" alt="">
+      <img class="container-img" v-else :src="containerIconUrls[cardInfo.name] || defaultImage" alt="">
     </div>
     <div class="footer">
       <button class="power-options-buttons bg-[#f2cc8f] hover:bg-gray-300">
@@ -54,7 +54,7 @@ export default {
   },
   data() {
     return {
-      port: '',
+      port: '0000',
       name: '',
       status: {
         value: 3,
@@ -62,15 +62,26 @@ export default {
       },
       selectedImage: null,
       isModalVisible: false, // Add this property to control modal visibility
+      containerIconUrls: {},
+      defaultImage: require('@/assets/images/placeholder_image.png')
     };
   },
   props: {
-    cardInfo: Object, 
+    cardInfo: Object,
   },
   computed: {
     ip() {
       return this.$root.$data.serverIp;
     }
+  },
+
+  watch: {
+    'cardInfo.name': {
+      immediate: true,
+      handler(newValue) {
+        if (newValue) this.getContainerIconUrl(newValue);
+      },
+    },
   },
 
   methods: {
@@ -87,10 +98,24 @@ export default {
       this.name = updatedData.name;
       this.selectedImage = updatedData.selectedImage;
     },
-    getContainerIconUrl(containerName) {
+    async getContainerIconUrl(containerName) {
       const formattedName = containerName.charAt(0).toLowerCase() + containerName.slice(1);
-      return `https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/${formattedName}.png`;
+      const imageUrl = `https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/${formattedName}.png`;
+
+      try {
+        let response = await fetch(imageUrl);
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        } else {
+          this.containerIconUrls[containerName] = imageUrl;
+        }
+      } catch (error) {
+        console.log(`Fetch problem: ${error.message}`);
+        this.containerIconUrls[containerName] = this.defaultImage;
+      }
     }
+
   }
 }
 </script>
@@ -142,5 +167,4 @@ a {
 .footer {
   @apply bg-[#12131b] flex flex-row gap-x-2 p-1 justify-end px-2.5 py-1.5;
 }
-
 </style>

@@ -5,7 +5,8 @@
             <div class="mb-4 flex flex-row justify-center items-center">
                 <div class="w-full mr-2">
                     <label for="ip" class="block text-sm font-semibold">IP Address</label>
-                    <input type="text" v-model="ip" id="ip" class="mt-1 p-2 border rounded-lg w-full">
+                    <!-- <input type="text" v-model="ip" id="ip" class="mt-1 p-2 border rounded-lg w-full"> -->
+                    <p>{{ cardIp }}</p>
                 </div>
                 <div>
                     <label for="port" class="block text-sm font-semibold">Port</label>
@@ -18,7 +19,8 @@
             </div>
             <div class="mb-4">
                 <label for="name" class="block text-sm font-semibold">Name for Image API</label>
-                <a href="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons@latest/png/" target="_blank">Click Here to find container name on image list</a>
+                <a class="underline" href="https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons@latest/png/"
+                    target="_blank">Click Here to find container name on image list</a>
                 <input type="text" v-model="imageName" id="name" class="mt-1 p-2 border rounded-lg w-full">
             </div>
             <div class="mb-4">
@@ -26,7 +28,7 @@
                 <input type="file" @change="handleImageUpload" id="image" class="mt-5">
             </div>
             <div class="flex justify-center mt-10 gap-x-2">
-                <button class="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg" @click="deleteItem">Delete
+                <button class="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg" @click="hideItem">Hide
                     Button</button>
                 <button @click="closeModal" class="px-4 py-2 text-white bg-red-500 hover:bg-red-600 rounded-lg">
                     Close
@@ -40,6 +42,9 @@
 </template>
   
 <script>
+
+import { postCardData } from '@/api/containers';
+
 export default {
     name: 'ModalComponent',
     emits: ['close'], // Declare any other emitted events here
@@ -65,17 +70,17 @@ export default {
 
     data() {
         return {
-            ip: this.cardIp,
             port: this.cardPort,
             name: this.cardName,
             imageName: '',
             selectedImage: this.cardImage,
+            isVisible: true
         };
     },
 
     computed: {
         isFormFullfield() {
-            return !!this.ip && !!this.port && !!this.name;
+            return !!this.port && !!this.name;
         }
     },
     methods: {
@@ -96,26 +101,43 @@ export default {
         closeModal() {
             this.$emit('close');
         },
-        deleteItem() {
+        hideItem() {
             // Implement your delete logic here
             this.closeModal();
         },
-        saveChanges() {
+        async saveChanges() {
 
             // Create an object containing the updated data
             const updatedData = {
-                ip: this.ip,
                 port: this.port,
                 name: this.name,
-                selectedImage: this.selectedImage
+                selectedImage: this.selectedImage,
+                imageName: this.imageName
             }
 
+            const cardData = {
+                port : this.port,
+                isVisible : this.isVisible,
+                imageName : this.imageName,
+                cardName : this.cardName
+            }
 
-            // Emit an event with the updated data
-            this.$emit('save-settings', updatedData)
-
-            // Implement your save logic here with the formData
-            this.closeModal();
+            try {
+                // Make a POST request with the updated data
+                const response = await postCardData(this.cardName, cardData);
+                // Check the response status, if successful continue, else throw error or handle accordingly
+                if (response.status === 200) {
+                    // Emit an event with the updated data
+                    this.$emit('save-settings', updatedData)
+                    // Close modal after successful save
+                    this.closeModal();
+                } else {
+                    // Handle unsuccessful save, could be to notify user or log error
+                    console.error(`Server responded with status: ${response.status}`);
+                }
+            } catch (error) {
+                console.error('Could not save card information: ' + error);
+            }
         }
     }
 };

@@ -11,16 +11,13 @@
 
         <!-- Group content -->
         <div v-show="!isCollapsed" class="bg-[#517061]">
-            <div class="flex items-center flex-wrap gap-8 justify-center p-4 ">
-                <Card v-for="(card, index) in cardsInfo" :key="index" :cardInfo="card" />
-            </div>
+            
         </div>
     </div>
 </template>
   
 <script>
 
-import Card from './Card.vue';
 
 export default {
     name: 'CollapseTabComponent',
@@ -34,7 +31,7 @@ export default {
         cardsInfo: Object
     },
     components: {
-        Card
+
     },
     methods: {
         toggleCollapse() {

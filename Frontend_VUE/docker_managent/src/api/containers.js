@@ -8,4 +8,8 @@ function pingServerResquest() {
     return httpRequest.get('/ping')
 }
 
-export {getAllContainersInfo, pingServerResquest}
+async function postCardData(name, cardData) {
+    return httpRequest.post(`/containers/updateCard/${name}`, cardData);
+  }
+
+export {getAllContainersInfo, pingServerResquest, postCardData}

@@ -11,7 +11,7 @@ console.clear()
 // Define the container schema and model
 const containerSchema = new mongoose.Schema({
   name: String,
-  cardInfo: Object,
+  cardData: Object,
   containerId: String,
   state: String,
   runtime: Object,
@@ -53,6 +53,11 @@ router.get('/containers', async (req, res) => {
         containerId: containerInfo.Id,
         state: containerInfo.State,
         runtime: extractTimeFromStatus(containerInfo.Status),
+        cardData:{
+          port: '0000',
+          imageName: parseString(containerInfo.Names),
+          cardName: parseString(containerInfo.Names)
+        }
       };
 
       // Find the container in the database by name
@@ -132,6 +137,9 @@ router.get('/containers/:name', async (req, res) => {
 router.post('/containers/updateCard/:name', async (req, res) => {
   const containerName = req.params.name;
   const newPort = req.body.port;
+  const isVisible = req.body.isVisible;
+  const imageName = req.body.imageName;
+  const cardName = req.body.cardName;
 
   try {
     // Find the container by name
@@ -142,12 +150,17 @@ router.post('/containers/updateCard/:name', async (req, res) => {
     }
 
     // Update the containerPort field
-    container.containerPort = newPort;
+    container.visible = isVisible;
+    container.cardData = {
+      port: newPort,
+      imageName: imageName,
+      cardName: cardName
+    }
 
     // Save the updated document
     await container.save();
 
-    res.status(200).json({ message: 'Container port updated successfully', container });
+    res.status(200).json({ message: 'Container updated successfully', container });
   } catch (error) {
     console.error('Error:', error);
     res.status(500).json({ error: 'Internal Server Error' });

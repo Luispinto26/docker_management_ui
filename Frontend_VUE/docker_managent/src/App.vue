@@ -1,12 +1,11 @@
 <template>
   <div id="app" class="min-h-screen flex flex-col">
     <AppHeader @update-server-ip="updateServerIpHandler" :containersCount="totalContainersInfo" :pingDuration="pingDuration" />
-
     <div class="flex-1">
-      <CollapseTab :cardsInfo="cardsInfo"/>
-      <CollapseTab :cardsInfo="cardsInfo"/>
+      <div class="flex items-center flex-wrap gap-8 justify-center p-4 ">
+          <Card v-for="(card, index) in cardsInfo" :key="index" :cardInfo="card" />
+      </div>
     </div>
-
     <AppFooter/>
   </div>
 </template>
@@ -15,7 +14,7 @@
 
 import AppHeader from './components/AppHeader.vue';
 import AppFooter from './components/AppFooter.vue';
-import CollapseTab from './components/CollapseTab.vue';
+import Card from './components/Card.vue';
 
 import { getAllContainersInfo, pingServerResquest } from './api/containers';
 
@@ -25,7 +24,7 @@ export default {
   components: {
     AppHeader,
     AppFooter,
-    CollapseTab
+    Card
   },
   data() {
     return {
@@ -41,6 +40,7 @@ export default {
         console.log(response.data)
         this.totalContainersInfo = response.data.containersCountInfo
         this.cardsInfo = response.data.ContainersList;
+        console.log(this.cardsInfo)
       })
       .catch(error => {
         console.error('Error fetching cards:', error);
@@ -66,7 +66,7 @@ export default {
         .then(() => {
           const endTime = performance.now();
           const pingDuration = endTime - startTime;
-          this.pingDuration = `Ping duration: ${pingDuration.toFixed(2)} ms`
+          this.pingDuration = `Ping: ${pingDuration.toFixed(2)} ms`
         })
         .catch(error => {
           this.pingDuration = null
