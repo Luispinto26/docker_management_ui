@@ -3,7 +3,7 @@
     <AppHeader @update-server-ip="updateServerIpHandler" :containersCount="totalContainersInfo" :pingDuration="pingDuration" />
     <div class="flex-1">
       <div class="flex items-center flex-wrap gap-8 justify-center p-4 ">
-          <Card v-for="(card, index) in cardsInfo" :key="index" :cardInfo="card" />
+          <Card v-for="card in visibleCards" :key="card.name" :cardInfo="card" @card-update="cardUpdateHandler"/>
       </div>
     </div>
     <AppFooter/>
@@ -26,21 +26,21 @@ export default {
     AppFooter,
     Card
   },
+
   data() {
     return {
       serverIp: '192.168.1.103',
       cardsInfo: [],
       totalContainersInfo: {},
-      pingDuration: ''
+      pingDuration: '',
     }
   },
+
   created() {
     getAllContainersInfo()
       .then(response => {
-        console.log(response.data)
         this.totalContainersInfo = response.data.containersCountInfo
         this.cardsInfo = response.data.ContainersList;
-        console.log(this.cardsInfo)
       })
       .catch(error => {
         console.error('Error fetching cards:', error);
@@ -48,15 +48,29 @@ export default {
     this.pingServer();
     this.pingInterval = setInterval(() => {
       this.pingServer();
-    }, 1000);
+    }, 20000);
   },
-  mounted() {
 
+  computed: {
+    visibleCards(){
+      return this.cardsInfo.filter((cardInfo) => cardInfo.visible)
+    }
   },
+
   beforeUnmount() {
     clearInterval(this.pingInterval);
   },
+
   methods: {
+    cardUpdateHandler(updatedData) {
+      let outdatedCard = this.cardsInfo.find(card => card.name === updatedData.slug)
+      outdatedCard.cardData.cardName = updatedData.cardName;
+      outdatedCard.cardData.port = updatedData.port;
+      outdatedCard.cardData.imageName = updatedData.imageName;
+      outdatedCard.visible = updatedData.isVisible;
+      outdatedCard.cardData.base64Image = updatedData.selectedImage;
+    },
+
     updateServerIpHandler(ip) {
       this.serverIp = ip;
     },
@@ -119,54 +133,5 @@ button[disabled] {
 ::-webkit-scrollbar-thumb:hover {
   background-color: #ffe8c7; /* Color when hovered */
 }
-
-/* Define the styles for Firefox */
-/* Firefox doesn't support scrollbar width customization directly */
-/* So, we can only style the scrollbar thumb and track */
-/* Use -moz-scrollbar for older versions of Firefox */
-/* Firefox 64+ supports scrollbar-width property */
-/* Uncomment the scrollbar-width property if using Firefox 64+ */
-/*
-* {
-  scrollbar-width: thin;
-  scrollbar-color: #4caf50 #f1f1f1;
-}
-
-*::-webkit-scrollbar {
-  width: 10px;
-}
-
-*::-webkit-scrollbar-thumb {
-  background-color: #4caf50;
-  border-radius: 5px;
-}
-
-*::-webkit-scrollbar-thumb:hover {
-  background-color: #45a049;
-}
-*/
-
-/* Define the styles for Edge and IE */
-/* Edge and IE support scrollbar width customization */
-/* Uncomment these styles if needed */
-/*
-* {
-  scrollbar-width: thin;
-  scrollbar-color: #4caf50 #f1f1f1;
-}
-
-::-webkit-scrollbar {
-  width: 10px;
-}
-
-::-webkit-scrollbar-thumb {
-  background-color: #4caf50;
-  border-radius: 5px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background-color: #45a049;
-}
-*/
 
 </style>

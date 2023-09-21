@@ -15,7 +15,8 @@ const containerSchema = new mongoose.Schema({
   containerId: String,
   state: String,
   runtime: Object,
-  visible: Boolean
+  visible: Boolean,
+  urlProtocol: String,
 }, { versionKey: false });
 
 const Container = mongoose.model('Container', containerSchema);
@@ -57,7 +58,9 @@ router.get('/containers', async (req, res) => {
           port: '0000',
           imageName: parseString(containerInfo.Names),
           cardName: parseString(containerInfo.Names)
-        }
+        },
+        visible: true,
+        urlProtocol: 'http://'
       };
 
       // Find the container in the database by name
@@ -140,6 +143,7 @@ router.post('/containers/updateCard/:name', async (req, res) => {
   const isVisible = req.body.isVisible;
   const imageName = req.body.imageName;
   const cardName = req.body.cardName;
+  const protocol = req.body.selectedProtocol
 
   try {
     // Find the container by name
@@ -156,6 +160,7 @@ router.post('/containers/updateCard/:name', async (req, res) => {
       imageName: imageName,
       cardName: cardName
     }
+    container.urlProtocol = protocol
 
     // Save the updated document
     await container.save();

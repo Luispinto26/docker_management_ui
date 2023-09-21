@@ -3,7 +3,7 @@
     <div class="card-header">
       <div class="text-sm font-light">
         <p><span class="font-bold">Uptime:</span> {{ cardInfo.runtime.value }} {{ cardInfo.runtime.unit }}</p>
-        <p><span class="font-bold">IP:</span> {{ ip && port ? ip + ':' + port : '' }}</p>
+        <p><span class="font-bold">IP:</span> {{ ip && cardInfo.cardData.port ? ip + ':' + cardInfo.cardData.port : '' }}</p>
       </div>
       <div class="settings">
         <button class="settings-button" @click="openModal">
@@ -11,14 +11,15 @@
         </button>
       </div>
       <span class="relative flex h-3 w-3 z-10">
-        <span class="animate-ping absolute h-full w-full rounded-full bg-green-400 opacity-75"></span>
-        <span class="relative rounded-full h-3 w-3 bg-green-500"></span>
+        <span :class="{'animate-ping': cardInfo.state !== 'exited'}" class="absolute h-full w-full rounded-full bg-green-400 opacity-75"></span>
+        <span :class="{'bg-red-500': cardInfo.state === 'exited', 'bg-green-500': cardInfo.state !== 'exited'}" class="relative rounded-full h-3 w-3"></span>
       </span>
     </div>
-    <h1 class="text-xl text-white py-1 h-fit">{{ name || cardInfo.name }}</h1>
+    <h1 class="text-xl text-white pt-4 pb-1 h-fit">{{ name || cardInfo.cardData.cardName }}</h1>
     <div class="img-container">
-      <img class="container-img" v-if="selectedImage" :src="selectedImage" alt="">
-      <img class="container-img" v-else :src="containerIconUrls[cardInfo.name] || defaultImage" alt="">
+      <a class="h-full" :href="containerUrl" target="_blank">
+        <img class="container-img" :src="selectedImage" alt="">
+      </a>
     </div>
     <div class="footer">
       <button class="power-options-buttons bg-[#f2cc8f] hover:bg-gray-300">
@@ -40,12 +41,13 @@
     </div>
   </div>
 
-  <ModalComponent v-if="isModalVisible" :cardIp="ip" :cardPort="port" :cardName="cardInfo.name" :cardImage="selectedImage"
+  <ModalComponent v-if="isModalVisible" :cardIp="ip" :cardProtocol="cardInfo.urlProtocol" :cardPort="cardInfo.cardData.port" :cardName="cardInfo.cardData.cardName" :cardImage="selectedImage" :cardImageName = "cardInfo.cardData.imageName"
     @close="closeModal" @save-settings="updateData" />
 </template>
 
 <script>
 import ModalComponent from "./Modal.vue"
+import { postCardData } from '@/api/containers';
 
 export default {
   name: 'CardComponent',
@@ -54,7 +56,7 @@ export default {
   },
   data() {
     return {
-      port: '0000',
+      port: '',
       name: '',
       status: {
         value: 3,
@@ -62,8 +64,8 @@ export default {
       },
       selectedImage: null,
       isModalVisible: false, // Add this property to control modal visibility
-      containerIconUrls: {},
-      defaultImage: require('@/assets/images/placeholder_image.png')
+      defaultImage: require('@/assets/images/placeholder_image.png'),
+      containerUrl: ''
     };
   },
   props: {
@@ -75,14 +77,11 @@ export default {
     }
   },
 
-  watch: {
-    'cardInfo.name': {
-      immediate: true,
-      handler(newValue) {
-        if (newValue) this.getContainerIconUrl(newValue);
-      },
-    },
-  },
+  emits: ['card-update'],
+
+  created() {
+    this.getContainerIconUrl(this.cardInfo.cardData.imageName);
+  }, 
 
   methods: {
     openModal() {
@@ -92,15 +91,34 @@ export default {
       this.isModalVisible = false;
     },
     // Update the data when the event is received
-    updateData(updatedData) {
-      this.ip = updatedData.ip;
-      this.port = updatedData.port;
-      this.name = updatedData.name;
-      this.selectedImage = updatedData.selectedImage;
+    async updateData(updatedData) {
+      try {
+        
+          // Make a POST request with the updated data
+          const response = await postCardData(this.cardInfo.name, updatedData);
+          // Check the response status, if successful continue, else throw error or handle accordingly
+          if (response.status === 200) {
+            this.port = updatedData.port;
+            this.name = updatedData.cardName;
+            if (!updatedData.selectedImage) {
+              this.getContainerIconUrl(updatedData.imageName);
+            } else {
+              this.selectedImage = updatedData.selectedImage;
+            }
+            this.containerUrl = updatedData.selectedProtocol + this.ip + ':' + this.port ;
+            this.$emit('card-update', {slug: this.cardInfo.name, ...updatedData});
+          } else {
+              // Handle unsuccessful save, could be to notify user or log error
+              console.error(`Server responded with status: ${response.status}`);
+          }
+      } catch (error) {
+          console.error('Could not save card information: ' + error);
+      }
+      
     },
-    async getContainerIconUrl(containerName) {
-      const formattedName = containerName.charAt(0).toLowerCase() + containerName.slice(1);
-      const imageUrl = `https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/${formattedName}.png`;
+    async getContainerIconUrl(imageName) {
+      const formatedName = imageName.toLowerCase();
+      const imageUrl = `https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/${formatedName}.png`;
 
       try {
         let response = await fetch(imageUrl);
@@ -108,11 +126,11 @@ export default {
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         } else {
-          this.containerIconUrls[containerName] = imageUrl;
+          this.selectedImage = imageUrl;
         }
       } catch (error) {
         console.log(`Fetch problem: ${error.message}`);
-        this.containerIconUrls[containerName] = this.defaultImage;
+        this.selectedImage = this.defaultImage;
       }
     }
 
@@ -161,7 +179,7 @@ a {
 }
 
 .container-img {
-  @apply object-contain w-full h-full p-4;
+  @apply object-contain w-full h-full px-4 pb-6;
 }
 
 .footer {
