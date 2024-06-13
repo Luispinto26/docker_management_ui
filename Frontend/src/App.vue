@@ -1,50 +1,52 @@
 <template>
   <div id="app" class="min-h-screen flex flex-col">
-    <AppHeader @update-server-ip="updateServerIpHandler" :containersCount="totalContainersInfo" :pingDuration="pingDuration" />
+    <AppHeader
+      @update-server-ip="updateServerIpHandler"
+      :containersCount="totalContainersInfo"
+      :pingDuration="pingDuration" />
     <div class="flex-1">
-      <div class="flex items-center flex-wrap gap-8 justify-center p-4 ">
-          <Card v-for="card in visibleCards" :key="card.name" :cardInfo="card" @card-update="cardUpdateHandler"/>
+      <div class="flex items-center flex-wrap gap-8 justify-center p-4">
+        <Card v-for="card in visibleCards" :key="card.name" :cardInfo="card" @card-update="cardUpdateHandler" />
       </div>
     </div>
-    <AppFooter/>
+    <AppFooter />
   </div>
 </template>
 
 <script>
+import AppHeader from "./components/AppHeader.vue";
+import AppFooter from "./components/AppFooter.vue";
+import Card from "./components/Card.vue";
 
-import AppHeader from './components/AppHeader.vue';
-import AppFooter from './components/AppFooter.vue';
-import Card from './components/Card.vue';
-
-import { getAllContainersInfo, pingServerResquest } from './api/containers';
+import { getAllContainersInfo, pingServerResquest } from "./api/containers";
 
 export default {
-  name: 'App',
+  name: "App",
 
   components: {
     AppHeader,
     AppFooter,
-    Card
+    Card,
   },
 
   data() {
     return {
-      serverIp: '192.168.1.103',
+      serverIp: null,
       cardsInfo: [],
       totalContainersInfo: {},
-      pingDuration: '',
-    }
+      pingDuration: "",
+    };
   },
 
   created() {
     getAllContainersInfo()
-      .then(response => {
-        this.totalContainersInfo = response.data.containersCountInfo
+      .then((response) => {
+        this.totalContainersInfo = response.data.containersCountInfo;
         this.cardsInfo = response.data.ContainersList;
       })
-      .catch(error => {
-        console.error('Error fetching cards:', error);
-      })
+      .catch((error) => {
+        console.error("Error fetching cards:", error);
+      });
     this.pingServer();
     this.pingInterval = setInterval(() => {
       this.pingServer();
@@ -52,9 +54,9 @@ export default {
   },
 
   computed: {
-    visibleCards(){
-      return this.cardsInfo.filter((cardInfo) => cardInfo.visible)
-    }
+    visibleCards() {
+      return this.cardsInfo.filter((cardInfo) => cardInfo.visible);
+    },
   },
 
   beforeUnmount() {
@@ -63,7 +65,7 @@ export default {
 
   methods: {
     cardUpdateHandler(updatedData) {
-      let outdatedCard = this.cardsInfo.find(card => card.name === updatedData.slug)
+      let outdatedCard = this.cardsInfo.find((card) => card.name === updatedData.slug);
       outdatedCard.cardData.cardName = updatedData.cardName;
       outdatedCard.cardData.port = updatedData.port;
       outdatedCard.cardData.imageName = updatedData.imageName;
@@ -80,23 +82,21 @@ export default {
         .then(() => {
           const endTime = performance.now();
           const pingDuration = endTime - startTime;
-          this.pingDuration = `Ping: ${pingDuration.toFixed(2)} ms`
+          this.pingDuration = `Ping: ${pingDuration.toFixed(2)} ms`;
         })
-        .catch(error => {
-          this.pingDuration = null
-          console.error('Error:', error);
+        .catch((error) => {
+          this.pingDuration = null;
+          console.error("Error:", error);
         });
-    }
-  }
-}
+    },
+  },
+};
 </script>
 
 <style lang="postcss">
 * {
   box-sizing: border-box;
-
 }
-
 
 #app {
   font-family: Roboto, sans-serif;
@@ -105,7 +105,6 @@ export default {
   text-align: center;
   background-color: #3d405b;
   /* background-image: linear-gradient(135deg, #aa3bb1, #582a7e); */
-
 }
 
 img {
@@ -133,5 +132,4 @@ button[disabled] {
 ::-webkit-scrollbar-thumb:hover {
   background-color: #ffe8c7; /* Color when hovered */
 }
-
 </style>

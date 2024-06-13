@@ -1,5 +1,5 @@
-const Docker = require('dockerode');
-const docker = new Docker({ host: 'http://192.168.1.103', port: 2375 });
+const Docker = require("dockerode");
+const docker = new Docker({ host: "http://192.168.1.84", port: 2375 });
 
 // Start a container
 function startContainer(containerId) {
@@ -10,7 +10,7 @@ function startContainer(containerId) {
       if (err) {
         reject(err);
       } else {
-        resolve('Container started successfully');
+        resolve("Container started successfully");
       }
     });
   });
@@ -25,7 +25,7 @@ function restartContainer(containerId) {
       if (err) {
         reject(err);
       } else {
-        resolve('Container restarted successfully');
+        resolve("Container restarted successfully");
       }
     });
   });
@@ -40,12 +40,11 @@ function stopContainer(containerId) {
       if (err) {
         reject(err);
       } else {
-        resolve('Container stopped successfully');
+        resolve("Container stopped successfully");
       }
     });
   });
 }
-
 
 async function isImageUpdated(containerId, imageName) {
   // Get the container object
@@ -64,8 +63,8 @@ async function isImageUpdated(containerId, imageName) {
     return containerImageId === latestImageId;
   } catch (error) {
     // Handle any errors that occur during the process
-    console.error('Error:', error);
-    throw new Error('Failed to check image update status');
+    console.error("Error:", error);
+    throw new Error("Failed to check image update status");
   }
 }
 
@@ -73,5 +72,5 @@ module.exports = {
   startContainer,
   restartContainer,
   stopContainer,
-  isImageUpdated
+  isImageUpdated,
 };

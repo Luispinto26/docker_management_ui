@@ -1,0 +1,16 @@
+services:
+  app:
+    build:
+      context: ./Frontend/
+    container_name: docker-management-ui
+    ports:
+      - 8686:80
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: ./Backend/
+    container_name: docker-management-server
+    ports:
+      - 3000:3000
+    restart: unless-stopped
