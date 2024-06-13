@@ -1,28 +1,47 @@
+version: "3.8"
+
 services:
-  app:
+  frontend:
     build:
       context: ./Frontend/
     container_name: docker-management-ui
     ports:
-      - 8686:80
+      - "8686:80"
     restart: unless-stopped
+    networks:
+      - docker-management-network
 
   backend:
     build:
       context: ./Backend/
     container_name: docker-management-server
     ports:
-      - 3000:3000
+      - "3000:3000"
     restart: unless-stopped
     depends_on:
       - mongodb
+    networks:
+      - docker-management-network
+    environment:
+      MONGO_URI: mongodb://root:root@mongodb:27017
 
   mongodb:
     image: mongo
-    restart: always
     container_name: docker-management-mongodb
     ports:
-      - 27017:27017
+      - "27017:27017"
+    restart: always
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: root
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - docker-management-network
+
+volumes:
+  mongo-data:
+
+networks:
+  docker-management-network:
+    driver: bridge
