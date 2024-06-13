@@ -15,7 +15,7 @@ services:
       - 3000:3000
     restart: unless-stopped
     depends_on:
-      - docker-management-mongodb
+      - mongodb
 
   mongodb:
     image: mongo
